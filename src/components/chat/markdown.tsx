@@ -1,119 +1,77 @@
-import Link from "next/link";
-import React, { memo } from "react";
-import ReactMarkdown, { type Components } from "react-markdown";
-import remarkGfm from "remark-gfm";
-import { CodeBlock } from "./code-block";
+import ReactMarkdown from "react-markdown";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
 
-const components: Partial<Components> = {
-  code: ({ inline, className, children, ...props }) => {
-    const match = /language-(\w+)/.exec(className || "");
-    return !inline ? (
-      <CodeBlock
-        code={String(children).replace(/\n$/, "")}
-        language={match?.[1] || ""}
-      />
-    ) : (
-      <code className={className} {...props}>
-        {children}
-      </code>
-    );
-  },
-  pre: ({ children }) => <>{children}</>,
-  ol: ({ children, ...props }) => {
-    return (
-      <ol className="ml-4 list-outside list-decimal" {...props}>
-        {children}
-      </ol>
-    );
-  },
-  li: ({ children, ...props }) => {
-    return (
-      <li className="py-1" {...props}>
-        {children}
-      </li>
-    );
-  },
-  ul: ({ children, ...props }) => {
-    return (
-      <ul className="ml-4 list-outside list-disc" {...props}>
-        {children}
-      </ul>
-    );
-  },
-  strong: ({ children, ...props }) => {
-    return (
-      <span className="font-semibold" {...props}>
-        {children}
-      </span>
-    );
-  },
-  a: ({ children, ...props }) => {
-    return (
-      <Link
-        className="text-blue-500 hover:underline"
-        target="_blank"
-        rel="noreferrer"
-        {...props}
-      >
-        {children}
-      </Link>
-    );
-  },
-  h1: ({ children, ...props }) => {
-    return (
-      <h1 className="mb-2 mt-6 text-3xl font-semibold" {...props}>
-        {children}
-      </h1>
-    );
-  },
-  h2: ({ children, ...props }) => {
-    return (
-      <h2 className="mb-2 mt-6 text-2xl font-semibold" {...props}>
-        {children}
-      </h2>
-    );
-  },
-  h3: ({ children, ...props }) => {
-    return (
-      <h3 className="mb-2 mt-6 text-xl font-semibold" {...props}>
-        {children}
-      </h3>
-    );
-  },
-  h4: ({ children, ...props }) => {
-    return (
-      <h4 className="mb-2 mt-6 text-lg font-semibold" {...props}>
-        {children}
-      </h4>
-    );
-  },
-  h5: ({ children, ...props }) => {
-    return (
-      <h5 className="mb-2 mt-6 text-base font-semibold" {...props}>
-        {children}
-      </h5>
-    );
-  },
-  h6: ({ children, ...props }) => {
-    return (
-      <h6 className="mb-2 mt-6 text-sm font-semibold" {...props}>
-        {children}
-      </h6>
-    );
-  },
-};
+import { CopyButton } from "@/components/copy-to-clipboard";
 
-const remarkPlugins = [remarkGfm];
+interface MarkdownProps {
+  children: string;
+}
 
-const NonMemoizedMarkdown = ({ children }: { children: string }) => {
+export function Markdown({ children }: MarkdownProps) {
   return (
-    <ReactMarkdown remarkPlugins={remarkPlugins} components={components}>
+    <ReactMarkdown
+      components={{
+        // Override pre and code elements to prevent nesting issues
+        pre: (props) => (
+          <pre
+            className="relative my-4 overflow-auto rounded-lg bg-muted p-4"
+            {...props}
+          />
+        ),
+        code: ({ inline, className, children, ...props }) => {
+          const match = /language-(\w+)/.exec(className || "");
+          const language = match ? match[1] : "";
+
+          if (!inline && language) {
+            return (
+              <div className="relative">
+                <SyntaxHighlighter
+                  style={dracula}
+                  language={language}
+                  PreTag="div"
+                  customStyle={{
+                    margin: 0,
+                    borderRadius: "0.5rem",
+                    background: "var(--muted)",
+                  }}
+                  {...props}
+                >
+                  {String(children).replace(/\n$/, "")}
+                </SyntaxHighlighter>
+                <CopyButton text={String(children)} code={true} />
+              </div>
+            );
+          }
+
+          return (
+            <code
+              className={`rounded-md bg-muted px-1.5 py-0.5 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-zinc-700 ${className || ""}`}
+              {...props}
+            >
+              {children}
+            </code>
+          );
+        },
+        // Ensure proper paragraph handling
+        p: ({ children }) => <span className="mb-4 block">{children}</span>,
+        // Handle other block elements that shouldn't be nested in paragraphs
+        blockquote: ({ children }) => (
+          <blockquote className="my-4 border-l-4 border-muted pl-4 italic">
+            {children}
+          </blockquote>
+        ),
+        // Proper list handling
+        ul: ({ children }) => (
+          <ul className="mb-4 list-disc pl-6">{children}</ul>
+        ),
+        ol: ({ children }) => (
+          <ol className="mb-4 list-decimal pl-6">{children}</ol>
+        ),
+      }}
+      className="break-words"
+    >
       {children}
     </ReactMarkdown>
   );
-};
-
-export const Markdown = memo(
-  NonMemoizedMarkdown,
-  (prevProps, nextProps) => prevProps.children === nextProps.children,
-);
+}
