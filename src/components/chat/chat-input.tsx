@@ -92,7 +92,7 @@ export default function ChatInput({
               adjustHeight();
             }}
             disabled={isLoading}
-            className="scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-transparent w-full resize-none border-0 bg-transparent p-4 placeholder:text-zinc-400 focus-visible:ring-0"
+            className="w-full resize-none border-0 bg-transparent p-4 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-zinc-700 placeholder:text-zinc-400 focus-visible:ring-0"
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();

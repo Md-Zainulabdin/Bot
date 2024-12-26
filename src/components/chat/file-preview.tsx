@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { FileIcon, X } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 

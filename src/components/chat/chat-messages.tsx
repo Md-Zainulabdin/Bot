@@ -1,16 +1,32 @@
 "use client";
 
-import { Bot, User } from "lucide-react";
+import Image from "next/image";
 import type { Message } from "ai";
+import { useEffect, useRef } from "react";
+import { Bot, User } from "lucide-react";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
-import Image from "next/image";
+import { Markdown } from "@/components/chat/markdown";
+import { CopyButton } from "@/components/copy-to-clipboard";
 
 interface ChatMessagesProps {
   messages: Message[];
+  error?: Error;
+  isLoading: boolean;
 }
 
-export function ChatMessages({ messages }: ChatMessagesProps) {
+export function ChatMessages({
+  messages,
+  error,
+  isLoading,
+}: ChatMessagesProps) {
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollAreaRef.current === null) return;
+    scrollAreaRef.current.scrollTo(0, scrollAreaRef.current.scrollHeight);
+  }, [messages]);
+
   if (!messages || messages.length === 0) {
     return (
       <div className="flex min-h-[calc(100vh-180px)] w-full items-center justify-center gap-6 p-8 text-center">
@@ -70,17 +86,32 @@ export function ChatMessages({ messages }: ChatMessagesProps) {
   }
 
   return (
-    <div className="flex h-screen w-full flex-col items-center justify-center">
-      <ScrollArea className="flex h-[600px] w-full max-w-3xl flex-col items-start overflow-auto whitespace-pre-wrap">
+    <ScrollArea
+      ref={scrollAreaRef}
+      className="flex h-[650px] w-full flex-col items-start overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-zinc-700"
+    >
+      <div className="mx-auto w-full max-w-3xl px-4">
         {messages.map((message) => (
           <Message key={message.id} {...message} />
         ))}
-      </ScrollArea>
-    </div>
+
+        {isLoading && (
+          <Message role="assistant" content="Thinking..." id="loading" />
+        )}
+
+        {error && (
+          <Message
+            role="assistant"
+            content="Something went wrong. Please try again."
+            id="error"
+          />
+        )}
+      </div>
+    </ScrollArea>
   );
 }
 
-function Message({ role, content, experimental_attachments }: Message) {
+function Message({ role, content, experimental_attachments, id }: Message) {
   return (
     <div className="flex items-start gap-4 py-4">
       <div className="flex h-10 w-10 shrink-0 select-none items-center justify-center rounded-md border bg-background shadow">
@@ -91,9 +122,14 @@ function Message({ role, content, experimental_attachments }: Message) {
         )}
       </div>
       <div className="min-w-0 flex-1 space-y-2 pr-4">
-        <p className="text-sm text-muted-foreground">
-          {role === "assistant" ? "AI Assistant" : "You"}
-        </p>
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">
+            {role === "assistant" ? "AI Assistant" : "You"}
+          </p>
+          {role === "assistant" && id !== "loading" && (
+            <CopyButton text={content} code={false} />
+          )}
+        </div>
         <div className="mt-2">
           {experimental_attachments
             ?.filter((attachment) =>
@@ -110,7 +146,11 @@ function Message({ role, content, experimental_attachments }: Message) {
               />
             ))}
         </div>
-        <div className="prose max-w-full break-words">{content}</div>
+        <div className="prose-container">
+          {" "}
+          {/* Changed from prose class */}
+          <Markdown>{content}</Markdown>
+        </div>
       </div>
     </div>
   );
