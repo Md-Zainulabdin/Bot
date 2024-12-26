@@ -8,6 +8,7 @@ import { Bot, User } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Markdown } from "@/components/chat/markdown";
 import { CopyButton } from "@/components/copy-to-clipboard";
+import { AnimatedShinyText } from "@/components/ui/shinny-text";
 
 interface ChatMessagesProps {
   messages: Message[];
@@ -29,36 +30,27 @@ export function ChatMessages({
 
   if (!messages || messages.length === 0) {
     return (
-      <div className="flex min-h-[calc(100vh-180px)] w-full items-center justify-center gap-6 p-8 text-center">
+      <div className="flex min-h-screen w-full items-center justify-center gap-6 p-8 text-center">
         <div>
-          <div className="flex items-center justify-center gap-2">
-            <div className="size-8">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="h-8 w-8"
-              >
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-              </svg>
+          <div className="flex items-center justify-center gap-2 pb-4">
+            <div className="size-16">
+              <Image
+                src="/vercel.png"
+                alt="Vercel Logo"
+                width={150}
+                height={150}
+              />
             </div>
-            <div className="size-8">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="h-8 w-8"
-              >
-                <path d="M12 5v14M5 12h14" />
-              </svg>
+            <div>
+              <AnimatedShinyText>________</AnimatedShinyText>
+            </div>
+            <div className="size-16">
+              <Image
+                src="/gemini.png"
+                alt="Gemini Logo"
+                width={150}
+                height={150}
+              />
             </div>
           </div>
           <p className="max-w-3xl text-lg">
@@ -146,11 +138,17 @@ function Message({ role, content, experimental_attachments, id }: Message) {
               />
             ))}
         </div>
-        <div className="prose-container">
-          {" "}
-          {/* Changed from prose class */}
-          <Markdown>{content}</Markdown>
-        </div>
+        {id == "loading" ? (
+          <div>
+            <AnimatedShinyText>{content}</AnimatedShinyText>
+          </div>
+        ) : (
+          <div className="prose-container">
+            {" "}
+            {/* Changed from prose class */}
+            <Markdown>{content}</Markdown>
+          </div>
+        )}
       </div>
     </div>
   );
