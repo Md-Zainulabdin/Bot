@@ -32,6 +32,7 @@
   }
   .dark {
     --background: 0 0% 3.9%;
+    --background-subtle: 240 3% 8%;
     --foreground: 0 0% 98%;
     --card: 0 0% 3.9%;
     --card-foreground: 0 0% 98%;
@@ -64,5 +65,53 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  .prose-container {
+    @apply text-base leading-7;
+  }
+
+  .prose-container :where(h1, h2, h3, h4, h5, h6) {
+    @apply mb-4 mt-6 font-bold text-foreground;
+  }
+
+  .prose-container :where(h1) {
+    @apply text-3xl;
+  }
+
+  .prose-container :where(h2) {
+    @apply text-2xl;
+  }
+
+  .prose-container :where(h3) {
+    @apply text-xl;
+  }
+
+  .prose-container :where(a) {
+    @apply text-primary underline-offset-4 hover:underline;
+  }
+
+  .prose-container :where(p) {
+    @apply mb-4;
+  }
+
+  .prose-container :where(ul, ol) {
+    @apply my-6 ml-6;
+  }
+
+  .prose-container :where(li) {
+    @apply mb-2;
+  }
+
+  .prose-container :where(blockquote) {
+    @apply my-6 border-l-4 border-muted pl-4 italic;
+  }
+
+  .prose-container :where(pre) {
+    @apply my-6 overflow-x-auto rounded-lg bg-muted p-4;
+  }
+
+  .prose-container :where(code):not(:where(pre *)) {
+    @apply rounded-md bg-muted px-1.5 py-0.5 text-sm;
   }
 }
