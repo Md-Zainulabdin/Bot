@@ -8,10 +8,9 @@ import { cn } from "@/lib/utils";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "AI Chatbot",
-  description: "Transform UI screenshots into production-ready code using AI",
+  title: "Bot | AI-Powered Assistant",
+  description: "Engage with a modern AI chatbot built with Google Gemini, delivering interactive and intelligent responses.",
 };
-
 export default function RootLayout({
   children,
 }: Readonly<{
