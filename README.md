@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<a href="https://github.com/Md-Zainulabdin/Bot">
+  <img alt="Modern AI Chatbot using Google Gemini and Vercel AI SDK." src="./src/app/demo/bot.jpg">
+  <br>
+  <br>
+  <h1>Bot | Modern AI Chatbot</h1>
+</a>
 
-## Getting Started
+<p>
+  A full-featured, customizable AI chatbot template powered by the Google Gemini model, built with Next.js, and styled with TailwindCSS and Shadcn UI.
+</p>
 
-First, run the development server:
+<p>
+  <a href="#features"><strong>Features</strong></a> ·
+  <a href="#model-provider"><strong>Model Provider</strong></a> ·
+  <a href="#deploy-your-own"><strong>Deploy Your Own</strong></a> ·
+  <a href="#running-locally"><strong>Running Locally</strong></a>
+</p>
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **[Next.js](https://nextjs.org)** for seamless routing and optimized server-side rendering
+  - Advanced React Server Components for performance and modular code
+- **[Vercel AI SDK](https://sdk.vercel.ai/docs)** for enhanced AI capabilities
+  - Unified APIs to integrate the Google Gemini model and other providers
+  - Simplified hooks to build dynamic and interactive AI chat features
+- **[shadcn/ui](https://ui.shadcn.com)** for a polished UI
+  - TailwindCSS integration for custom styling
+  - Radix UI component primitives for accessibility
+- **React Syntax Highlighter** for code snippet display with syntax highlighting
+- **Google Gemini Model** for state-of-the-art AI-driven interactions
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Model Provider
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+This chatbot is powered by the **Google Gemini model** using the [Vercel AI SDK](https://sdk.vercel.ai/docs). It allows easy customization to switch between models like OpenAI, Anthropic, Cohere, and others with minimal configuration.
 
-## Learn More
+## Deploy Your Own
 
-To learn more about Next.js, take a look at the following resources:
+Deploy your own chatbot on Vercel with one click:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fyour-username%2Fmodern-ai-chatbot&env=API_KEY,MODEL_PROVIDER&envDescription=Add%20your%20Google%20Gemini%20or%20other%20API%20Key%20here.&envLink=https%3A%2F%2Fdocs.your-chatbot-app.com%2Fenv&demo-title=Modern%20AI%20Chatbot&demo-description=A%20customizable%20AI%20chatbot%20template%20powered%20by%20the%20Google%20Gemini%20model%20and%20built%20with%20Next.js%20and%20TailwindCSS.&demo-url=https%3A%2F%2Fyour-chatbot-app.com&stores=[])
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Running Locally
 
-## Deploy on Vercel
+To run the chatbot locally, follow these steps:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Clone this repository:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   ```bash
+   git clone https://github.com/Md-Zainulabdin/Bot.git
+   ```
+
+2. Create a <code>.env</code> ile in the root directory and add the necessary environment variables:
+
+   ```bash
+   GOOGLE_GENERATIVE_AI_API_KEY=""
+   ```
+
+3. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+4. Start the development server
+
+   ```bash
+   npm run dev
+   ```
+
+Your chatbot should now be running at localhost:3000.
