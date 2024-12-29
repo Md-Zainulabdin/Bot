@@ -1,40 +1,66 @@
 import { Message, streamText } from "ai";
 import { google } from "@ai-sdk/google";
-
-import { getTokens, useToken as checkTokenUsage } from "@/lib/tokenManager";
+import { getTokens, processMessageToken } from "@/lib/tokenManager";
 import { SYSTEM_PROMPT } from "@/lib/prompt";
+import { revalidatePath } from "next/cache";
 
 export const maxDuration = 60;
 
 export async function POST(req: Request) {
-  const { messages } = await req.json();
+  try {
+    const { messages } = await req.json();
+    if (!Array.isArray(messages) || messages.length === 0) {
+      return new Response("Invalid request format or no messages provided", {
+        status: 400,
+      });
+    }
 
-  // Check available tokens
-  const availableTokens = await getTokens();
-  if (availableTokens <= 0) {
-    return new Response("No tokens available. Please try again tomorrow.", {
-      status: 403,
+    const lastMessage = messages[messages.length - 1];
+    const tokenData = await getTokens();
+
+    if (tokenData.tokens <= 0) {
+      return new Response("No tokens available. Please try again tomorrow.", {
+        status: 403,
+      });
+    }
+
+    const canProcessToken = await processMessageToken(lastMessage);
+    if (!canProcessToken) {
+      const errorMessage = generateErrorMessage(lastMessage, tokenData);
+      return new Response(errorMessage, { status: 403 });
+    }
+
+    const result = await streamText({
+      model: google("gemini-1.5-flash"),
+      messages,
+      system: SYSTEM_PROMPT,
     });
+
+    // Revalidate the path after processing is complete
+    revalidatePath("/");
+
+    return result.toDataStreamResponse();
+  } catch (error) {
+    console.error("Route error:", error);
+    return new Response("Internal server error", { status: 500 });
   }
+}
 
-  // Estimate token usage (this is a rough estimate, you might want to implement a more accurate method)
-  const estimatedTokenUsage = messages.reduce(
-    (acc: number, msg: Message) => acc + msg.content.length,
-    0,
-  );
+function generateErrorMessage(
+  message: Message,
+  tokenData: { textMessageCount: number },
+): string {
+  const imageCount =
+    message.experimental_attachments?.filter((attachment) =>
+      attachment.contentType?.startsWith("image/"),
+    ).length ?? 0;
 
-  // Use a token if necessary
-  if (!checkTokenUsage(estimatedTokenUsage)) {
-    return new Response("Token usage exceeded. Please try a shorter message.", {
-      status: 403,
-    });
+  let errorMessage = "Insufficient tokens.";
+  if (imageCount > 0) {
+    errorMessage += ` You need ${imageCount} token(s) for images.`;
   }
-
-  const result = streamText({
-    model: google("gemini-1.5-flash"),
-    messages,
-    system: SYSTEM_PROMPT,
-  });
-
-  return result.toDataStreamResponse();
+  if (tokenData.textMessageCount >= 15) {
+    errorMessage += " You need 1 token for text messages.";
+  }
+  return errorMessage;
 }

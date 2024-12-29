@@ -92,11 +92,7 @@ export function ChatMessages({
         )}
 
         {error && (
-          <Message
-            role="assistant"
-            content="Something went wrong. Please try again."
-            id="error"
-          />
+          <Message role="assistant" content={error?.message} id="error" />
         )}
       </div>
     </ScrollArea>
